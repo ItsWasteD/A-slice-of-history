@@ -1,2 +1,2 @@
 # A-slice-of-history
-IDPA 2018
+This is our Project for the IDPA 2018.
