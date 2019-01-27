@@ -9,6 +9,7 @@ public class CutsceneManager : MonoBehaviour
     public TextMeshProUGUI text;
     public int currentCutscene = 0;
 
+    //Chapter 1
     private string text1 = @"Vor etwa 13,8 Miliarden Jahren hat alles mit dem Urknall begonnen. 
     Das Universum begann sich rasant auszudenen. Die ersten Planeten entstanden.
     Zu dieser Zeit war aber alles Leben noch sehr weit entfernt.";
@@ -30,7 +31,20 @@ public class CutsceneManager : MonoBehaviour
 
     Helfe im folgenden Spiel dem Neandertaler Nahrung zu finden.";
 
+    //Chapter 2
+    private string text8 = @"Der griechische Bote Pheidippides, lief im Jahr 490 vor Christus in zwei Tagen von Athen nach Sparta. Er wollte Hilfe im Krieg gegen die Perser suchen.
+    500 Jahre später formten Plutarch und Lukian eine Legende.";
+    private string text9 = @"Die Legende besagt, das nach dem Sieg der Athener, in der Schlacht von Marathon, ein Läufer den 40 Kilometer langen Weg auf sich nahm, um zu berichten, dass sie gesiegt haben
+    und anschliessen vor Erschöpfung Tod zusammengebrochen sei.";
+    private string text10 = @"Bei den Langstreckenläufen der Neuzeit dachte aber niemand an die Historie. Erst als 1890 ein Hügel mit Gräbern der gefallenen Athener ausgegraben wurde, kam die Legende wieder
+    in Erinnerung.";
+    private string text11 = @"Der Sprachwissenschaftler Michel Bréal wollte den legendären Lauf im Rahmen der 1896 geplanten Olympischen Spielen von Athen als Wettkampf aufleben lassen.";
+    private string text12 = @"Mit einem Brief, teilte er seinem Freund dem Gründer des IOC(Internationales Olympisches Komitee) mit, dass der Sieger einen von ihm gestifteten Pokal erhalten soll.
+    So wurde der Olympische Marathon 1896 von Athen der erste organisierte Marathonlauf.";
+    private string text13 = @"Helfe dem Läufer den Marathon zu gewinnen!";
+
     private string[] cutscene0;
+    private string[] cutscene1;
 
     private string[][] cutscenes;
 
@@ -39,8 +53,9 @@ public class CutsceneManager : MonoBehaviour
     void Start()
     {
         cutscene0 = new string[] { text1, text2, text3, text4, text5, text6, text7 };
+        cutscene1 = new string[] { text8, text9, text10, text11, text12, text13 };
 
-        cutscenes = new string[][] { cutscene0 };
+        cutscenes = new string[][] { cutscene0, cutscene1 };
 
         text.text = cutscenes[currentCutscene][currentChapter];
     }
@@ -54,7 +69,7 @@ public class CutsceneManager : MonoBehaviour
         }
         else
         {
-            SceneManager.LoadScene(2);
+            //SceneManager.LoadScene(2);
         }
     }
 
