@@ -1,118 +1,119 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
-using System;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
-	public GameObject playerPrefab;
-	public Text continueText;
-	public Text scoreText;
+	public float levelStartDelay = 2f;
+	public float turnDelay = .1f;
+	public static GameManager instance = null;
+	public BoardManager boardScript;
+	public int playerFoodPoints = 100;
+	[HideInInspector] public bool playersTurn = true;
 
-	private float timeElapsed = 0f;
-	private float bestTime = 0f;
-	private float blinkTime = 0f;
-	private bool blink;
-	private bool gameStarted;
-	private TimeManager timeManager;
-	private GameObject player;
-	private GameObject floor;
-	private Spawner spawner;
-	private bool beatBestTime;
-
-	void Awake(){
-		floor = GameObject.Find ("Foreground");
-		spawner = GameObject.Find ("Spawner").GetComponent<Spawner> ();
-		timeManager = GetComponent<TimeManager> ();
-	}
+	private Text levelText;
+	private GameObject levelImage;
+	private int level = 1;
+	private List<Enemy> enemies;
+	private bool enemiesMoving;
+	private bool doingSetup;
+    private bool firstRound;
+    private bool playerAlive;
 
 	// Use this for initialization
-	void Start () {
-
-		var floorHeight = floor.transform.localScale.y;
-
-		var pos = floor.transform.position;
-		pos.x = 0;
-		pos.y = -((Screen.height / PixelPerfectCamera.pixelsToUnits) / 2) + (floorHeight / 2);
-		floor.transform.position = pos;
-
-		spawner.active = false;
-
-		Time.timeScale = 0;
-
-		continueText.text = "PRESS ANY BUTTON TO START";
-
-		bestTime = PlayerPrefs.GetFloat ("BestTime");
+	void Awake () {
+		if (instance == null)
+			instance = this;
+		else if (instance != this)
+			Destroy (gameObject);
+        firstRound = true;
+		DontDestroyOnLoad (gameObject);
+		enemies = new List<Enemy> ();
+        playerAlive = true;
+        boardScript = GetComponent<BoardManager> ();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (!gameStarted && Time.timeScale == 0) {
 
-			if(Input.anyKeyDown){
+	void OnLevelWasLoaded (int index)
+	{
+        if (firstRound)
+        {
+            firstRound = false;
+            InitGameBoi();
+        }
+        else
+        {
+            level++;
+            InitGameBoi();
+        }	
+	}
 
-				timeManager.ManipulateTime(1, 1f);
-				ResetGame();
-			}
+	void InitGameBoi()
+	{
+		doingSetup = true;
+
+		levelImage = GameObject.Find ("LevelImage");
+		levelText = GameObject.Find ("LevelText").GetComponent<Text> ();
+		levelText.text = "Day " + level;
+		levelImage.SetActive (true);
+		Invoke ("HideLevelImage", levelStartDelay);
+
+		enemies.Clear ();
+		boardScript.SetupScene (level);
+	}
+
+	private void HideLevelImage()
+	{
+		levelImage.SetActive (false);
+		doingSetup = false;
+	}
+
+	public void GameOver()
+	{
+		levelText.text = "After " + level + " days, you starved.";
+        levelImage.SetActive (true);
+		enabled = false;
+        playerAlive = false;
+        NextLevel();
+    }
+
+    public void NextLevel()
+    {
+        SceneManager.LoadScene(3);
+    }
+
+    // Update is called once per frame
+    void Update () {
+		if (playersTurn || enemiesMoving || doingSetup)
+			return;
+
+		StartCoroutine (MoveEnemies ());
+	}
+
+	public void AddEnemyToList(Enemy script)
+	{
+		enemies.Add (script);
+	}
+
+	IEnumerator MoveEnemies()
+	{
+		enemiesMoving = true;
+		yield return new WaitForSeconds (turnDelay);
+		if (enemies.Count == 0) {
+			yield return new WaitForSeconds (turnDelay);
 		}
 
-		if (!gameStarted) {
-			blinkTime ++;
-
-			if (blinkTime % 40 == 0) {
-				blink = !blink;
-			}
-
-			continueText.canvasRenderer.SetAlpha (blink ? 0 : 1);
-
-			var textColor = beatBestTime ? "#FF0" : "#FFF";
-
-			scoreText.text = "TIME: " + FormatTime (timeElapsed) + "\n<color="+textColor+">BEST: " + FormatTime (bestTime)+"</color>";
-		} else {
-			timeElapsed += Time.deltaTime;
-			scoreText.text = "TIME: "+FormatTime(timeElapsed);
+		for (int i = 0; i < enemies.Count; i++) {
+			enemies [i].MoveEnemy ();
+			yield return new WaitForSeconds (enemies [i].moveTime);
 		}
+
+		playersTurn = true;
+		enemiesMoving = false;
 	}
-
-	void OnPlayerKilled(){
-		spawner.active = false;
-
-		var playerDestroyScript = player.GetComponent<DestroyOffscreen> ();
-		playerDestroyScript.DestroyCallback -= OnPlayerKilled;
-
-		player.GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
-		timeManager.ManipulateTime (0, 5.5f);
-		gameStarted = false;
-
-		continueText.text = "PRESS ANY BUTTON TO RESTART";
-
-		if (timeElapsed > bestTime) {
-			bestTime = timeElapsed;
-			PlayerPrefs.SetFloat("BestTime", bestTime);
-			beatBestTime = true;
-		}
-	}
-
-	void ResetGame(){
-		spawner.active = true;
-
-		player = GameObjectUtil.Instantiate(playerPrefab, new Vector3(0, (Screen.height/PixelPerfectCamera.pixelsToUnits)/2 + 100, 0));
-
-		var playerDestroyScript = player.GetComponent<DestroyOffscreen> ();
-		playerDestroyScript.DestroyCallback += OnPlayerKilled;
-
-		gameStarted = true;
-
-		continueText.canvasRenderer.SetAlpha(0);
-
-		timeElapsed = 0;
-		beatBestTime = false;
-	}
-
-	string FormatTime(float value){
-		TimeSpan t = TimeSpan.FromSeconds (value);
-
-		return string.Format("{0:D2}:{1:D2}", t.Minutes, t.Seconds);
-	}
-
+    public bool isPlayerAlive()
+    {
+        return playerAlive;
+    }
 }
