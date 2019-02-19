@@ -8,6 +8,7 @@ public class CutsceneManager : MonoBehaviour
 {
     public TextMeshProUGUI text;
     public int currentCutscene = 0;
+    public int nextScene;
 
     //Chapter 1
     private string text1 = @"Vor etwa 13,8 Miliarden Jahren hat alles mit dem Urknall begonnen. 
@@ -69,7 +70,7 @@ public class CutsceneManager : MonoBehaviour
         }
         else
         {
-            SceneManager.LoadScene(2);
+            SceneManager.LoadScene(nextScene);
         }
     }
 
