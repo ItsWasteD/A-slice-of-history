@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System;
 
@@ -75,22 +76,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void OnPlayerKilled(){
-		spawner.active = false;
-
-		var playerDestroyScript = player.GetComponent<DestroyOffscreen> ();
-		playerDestroyScript.DestroyCallback -= OnPlayerKilled;
-
-		player.GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
-		timeManager.ManipulateTime (0, 5.5f);
-		gameStarted = false;
-
-		continueText.text = "PRESS ANY BUTTON TO RESTART";
-
-		if (timeElapsed > bestTime) {
-			bestTime = timeElapsed;
-			PlayerPrefs.SetFloat("BestTime", bestTime);
-			beatBestTime = true;
-		}
+		SceneManager.LoadScene(0);
 	}
 
 	void ResetGame(){
