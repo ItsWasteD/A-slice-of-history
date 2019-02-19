@@ -25,7 +25,7 @@ public class Player : MovingObject {
 	protected override void Start () {
 		animator = GetComponent<Animator> ();
 
-		food = GameManager.instance.playerFoodPoints;
+		food = GameManager1.instance.playerFoodPoints;
 
 		foodText.text = "Food: " + food;
 
@@ -34,12 +34,12 @@ public class Player : MovingObject {
 
 	private void OnDisable()
 	{
-		GameManager.instance.playerFoodPoints = food;
+		GameManager1.instance.playerFoodPoints = food;
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if (!GameManager.instance.playersTurn)
+		if (!GameManager1.instance.playersTurn)
 			return;
 
 		int horizontal = 0;
@@ -105,7 +105,7 @@ public class Player : MovingObject {
 
 		CheckIfGameOver ();
 
-		GameManager.instance.playersTurn = false;
+		GameManager1.instance.playersTurn = false;
 	}
 
 	private void OnTriggerEnter2D (Collider2D other)
@@ -151,7 +151,7 @@ public class Player : MovingObject {
 		if (food <= 0) {
 			SoundManager.instance.PlaySingle(gameOverSound);
 			SoundManager.instance.musicSource.Stop();
-			GameManager.instance.GameOver ();
+			GameManager1.instance.GameOver ();
 		}
 	}
 }

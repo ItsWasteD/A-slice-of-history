@@ -12,7 +12,7 @@ public class Enemy : MovingObject {
 	public AudioClip enemyAttack2;
 	
 	protected override void Start () {
-		GameManager.instance.AddEnemyToList (this);
+		GameManager1.instance.AddEnemyToList (this);
 		animator = GetComponent<Animator> ();
 		target = GameObject.FindGameObjectWithTag ("Player").transform;
 		base.Start ();
