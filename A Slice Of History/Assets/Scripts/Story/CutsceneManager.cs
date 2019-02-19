@@ -69,7 +69,7 @@ public class CutsceneManager : MonoBehaviour
         }
         else
         {
-            //SceneManager.LoadScene(2);
+            SceneManager.LoadScene(2);
         }
     }
 
