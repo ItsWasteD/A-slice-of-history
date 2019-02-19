@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
@@ -21,13 +22,14 @@ public class GameManager : MonoBehaviour {
 	private bool beatBestTime;
 
 	void Awake(){
-		floor = GameObject.Find ("Foreground");
+        floor = GameObject.Find ("Foreground");
 		spawner = GameObject.Find ("Spawner").GetComponent<Spawner> ();
 		timeManager = GetComponent<TimeManager> ();
 	}
 
 	// Use this for initialization
 	void Start () {
+
 
 		var floorHeight = floor.transform.localScale.y;
 
@@ -75,23 +77,10 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void OnPlayerKilled(){
-		spawner.active = false;
-
-		var playerDestroyScript = player.GetComponent<DestroyOffscreen> ();
-		playerDestroyScript.DestroyCallback -= OnPlayerKilled;
-
-		player.GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
-		timeManager.ManipulateTime (0, 5.5f);
-		gameStarted = false;
-
-		continueText.text = "PRESS ANY BUTTON TO RESTART";
-
-		if (timeElapsed > bestTime) {
-			bestTime = timeElapsed;
-			PlayerPrefs.SetFloat("BestTime", bestTime);
-			beatBestTime = true;
-		}
-	}
+        Destroy(gameObject);
+        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(0);
+    }
 
 	void ResetGame(){
 		spawner.active = true;

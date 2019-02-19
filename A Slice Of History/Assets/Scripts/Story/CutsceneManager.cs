@@ -42,7 +42,7 @@ public class CutsceneManager : MonoBehaviour
     private string text11 = @"Der Sprachwissenschaftler Michel Bréal wollte den legendären Lauf im Rahmen der 1896 geplanten Olympischen Spielen von Athen als Wettkampf aufleben lassen.";
     private string text12 = @"Mit einem Brief, teilte er seinem Freund dem Gründer des IOC(Internationales Olympisches Komitee) mit, dass der Sieger einen von ihm gestifteten Pokal erhalten soll.
     So wurde der Olympische Marathon 1896 von Athen der erste organisierte Marathonlauf.";
-    private string text13 = @"Helfe dem Läufer den Marathon zu gewinnen!";
+    private string text13 = @"Helfe dem Läufer für den Marathon zu trainieren!";
 
     private string[] cutscene0;
     private string[] cutscene1;

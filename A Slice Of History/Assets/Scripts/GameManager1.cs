@@ -20,23 +20,30 @@ public class GameManager1 : MonoBehaviour {
 	private bool enemiesMoving;
 	private bool doingSetup;
     private bool firstRound;
+    private bool firstGame;
     private bool playerAlive;
 
 	// Use this for initialization
 	void Awake () {
-		if (instance == null)
-			instance = this;
-		else if (instance != this)
-			Destroy (gameObject);
+        if (instance == null)
+            instance = this;
+        else
+        {
+            Destroy(gameObject);
+        }
         firstRound = true;
-		DontDestroyOnLoad (gameObject);
+        firstGame = true;
+
+        DontDestroyOnLoad (gameObject);
 		enemies = new List<Enemy> ();
         playerAlive = true;
+
         boardScript = GetComponent<BoardManager> ();
 	}
 
-	void OnLevelWasLoaded (int index)
-	{
+    void OnLevelWasLoaded(int index)
+    {
+
         if (firstRound)
         {
             firstRound = false;
@@ -46,7 +53,8 @@ public class GameManager1 : MonoBehaviour {
         {
             level++;
             InitGameBoi();
-        }	
+        }
+
 	}
 
 	void InitGameBoi()
@@ -80,6 +88,10 @@ public class GameManager1 : MonoBehaviour {
 
     public void NextLevel()
     {
+        firstGame = false;
+        playerAlive = false;
+        Destroy(gameObject);
+        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().name);
         SceneManager.LoadScene(3);
     }
 
