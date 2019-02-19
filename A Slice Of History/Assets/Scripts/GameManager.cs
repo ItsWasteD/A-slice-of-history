@@ -16,20 +16,22 @@ public class GameManager : MonoBehaviour {
 	private bool blink;
 	private bool gameStarted;
 	private TimeManager timeManager;
-	private GameObject player;
+    public static GameManager instance = null;
+    private GameObject player;
 	private GameObject floor;
 	private Spawner spawner;
 	private bool beatBestTime;
+    private bool shouldAwake;
 
 	void Awake(){
+
         floor = GameObject.Find ("Foreground");
 		spawner = GameObject.Find ("Spawner").GetComponent<Spawner> ();
-		timeManager = GetComponent<TimeManager> ();
+        timeManager = GetComponent<TimeManager> ();
 	}
 
 	// Use this for initialization
 	void Start () {
-
 
 		var floorHeight = floor.transform.localScale.y;
 
@@ -77,8 +79,24 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void OnPlayerKilled(){
-        Destroy(gameObject);
-        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().name);
+        spawner.active = false;
+
+        var playerDestroyScript = player.GetComponent<DestroyOffscreen>();
+        playerDestroyScript.DestroyCallback -= OnPlayerKilled;
+
+        player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        timeManager.ManipulateTime(0, 5.5f);
+        gameStarted = false;
+
+        continueText.text = "PRESS ANY BUTTON TO RESTART";
+
+        if (timeElapsed > bestTime)
+        {
+            bestTime = timeElapsed;
+            PlayerPrefs.SetFloat("BestTime", bestTime);
+            beatBestTime = true;
+        }
+        SceneManager.UnloadSceneAsync(4);
         SceneManager.LoadScene(0);
     }
 
