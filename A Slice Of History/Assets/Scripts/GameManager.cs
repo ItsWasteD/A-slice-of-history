@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour {
 
 		Time.timeScale = 0;
 
-		continueText.text = "PRESS ANY BUTTON TO START";
+		continueText.text = "KNOPF KLICKEN UM ZU STARTEN";
 
 		bestTime = PlayerPrefs.GetFloat ("BestTime");
 	}
@@ -71,33 +71,15 @@ public class GameManager : MonoBehaviour {
 
 			var textColor = beatBestTime ? "#FF0" : "#FFF";
 
-			scoreText.text = "TIME: " + FormatTime (timeElapsed) + "\n<color="+textColor+">BEST: " + FormatTime (bestTime)+"</color>";
+			scoreText.text = "ZEIT: " + FormatTime (timeElapsed) + "\n<color="+textColor+">BEST: " + FormatTime (bestTime)+"</color>";
 		} else {
 			timeElapsed += Time.deltaTime;
-			scoreText.text = "TIME: "+FormatTime(timeElapsed);
+			scoreText.text = "ZEIT: "+FormatTime(timeElapsed);
 		}
 	}
 
 	void OnPlayerKilled(){
-        spawner.active = false;
-
-        var playerDestroyScript = player.GetComponent<DestroyOffscreen>();
-        playerDestroyScript.DestroyCallback -= OnPlayerKilled;
-
-        player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        timeManager.ManipulateTime(0, 5.5f);
-        gameStarted = false;
-
-        continueText.text = "PRESS ANY BUTTON TO RESTART";
-
-        if (timeElapsed > bestTime)
-        {
-            bestTime = timeElapsed;
-            PlayerPrefs.SetFloat("BestTime", bestTime);
-            beatBestTime = true;
-        }
-        SceneManager.UnloadSceneAsync(4);
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(5);
     }
 
 	void ResetGame(){

@@ -8,4 +8,5 @@ public class ExitGame : MonoBehaviour
     {
         Application.Quit();
     }
+
 }
